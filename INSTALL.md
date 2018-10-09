@@ -1,3 +1,5 @@
+# RD-Connect Requests GUI dependencies and installation 
+
 1. If you don't have it, compile and install as root NodeJS 8.x or later:
 
 	```bash
@@ -26,5 +28,5 @@
 3. Install the requests interfaces:
 
 	```bash
-	cp -dpTr build ../rd-connect-user-management/static_requests"
+	cp -dpTr build ../rd-connect-user-management/static_requests
 	```
