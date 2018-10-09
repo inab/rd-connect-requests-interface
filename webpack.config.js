@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin-relative');
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
@@ -254,24 +254,28 @@ module.exports = (env, argv) => {
 			//]),
 			new HtmlWebpackPlugin({
 				title: 'RD-Connect request password reset',
+				relative: true,
 				chunks: ['requestPasswordResetView'],
 				template: path.join(PATHS.www,"index.html"),
 				filename: path.join(PATHS.dist,'requestPasswordResetView',"index.html")
 			}),
 			new HtmlWebpackPlugin({
 				title: 'RD-Connect user password reset',
+				relative: true,
 				chunks: ['passwordResetView'],
 				template: path.join(PATHS.www,"index.html"),
 				filename: path.join(PATHS.dist,'passwordResetView',"index.html")
 			}),
 			new HtmlWebpackPlugin({
 				title: 'RD-Connect valid e-mail confirmation',
+				relative: true,
 				chunks: ['confirmEmailView'],
 				template: path.join(PATHS.www,"index.html"),
 				filename: path.join(PATHS.dist,'confirmEmailView',"index.html")
 			}),
 			new HtmlWebpackPlugin({
 				title: 'RD-Connect GDPR acceptance',
+				relative: true,
 				chunks: ['acceptGDPRView'],
 				template: path.join(PATHS.www,"index.html"),
 				filename: path.join(PATHS.dist,'acceptGDPRView',"index.html")
