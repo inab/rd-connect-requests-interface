@@ -10,7 +10,6 @@ class AcceptGDPRApp extends React.Component {
 		
 		this.setState({
 			user: null,
-			acceptGDPR: false,
 			modalTitle: null,
 			error: null,
 			showModal: false,
@@ -57,7 +56,7 @@ class AcceptGDPRApp extends React.Component {
 			});
 		};
 		
-		this.request.submitResponse({acceptGDPR: this.state.acceptGDPR})
+		this.request.submitResponse({acceptGDPR: true})
 			.then(() => {
 				this.setState({
 					showModal: true,
@@ -148,7 +147,7 @@ class AcceptGDPRApp extends React.Component {
 							<Button bsStyle="info" onClick={()=>this.desistRequest()} className="submitCancelButtons" ><Glyphicon glyph="trash" />&nbsp;Cancel request</Button>
 						</Col>
 						<Col sm={12} md={6} style={{textAlign: 'right'}}>
-							<Button bsStyle="danger" onClick={() => this.confirmEmail()} className="submitCancelButtons" >Accept GDPR&nbsp;<Glyphicon glyph="pencil" /></Button>
+							<Button bsStyle="danger" onClick={() => this.requestAcceptGDPR()} className="submitCancelButtons" >Accept GDPR&nbsp;<Glyphicon glyph="pencil" /></Button>
 						</Col>
 					</Row>
 				</Grid>

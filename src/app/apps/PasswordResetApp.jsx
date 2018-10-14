@@ -134,7 +134,7 @@ class PasswordResetApp extends React.Component {
 				this.setState({
 					showModal: true,
 					modalTitle: 'Request submitted',
-					error: 'Password reset request for RD-Connect user ' + this.state.usernameOrEmail + ' has been submitted'
+					error: 'Password reset request for RD-Connect user ' + this.state.user.username + ' has been submitted'
 				});
 			},errHandler);
 	}
@@ -201,7 +201,7 @@ class PasswordResetApp extends React.Component {
 		const onSubmit = () => this.changePassword();
 		return (
 			<div>
-				<h3>Password change for user {this.state.user.username}</h3>
+				<h3>Password change for user {this.state.user.cn} ({this.state.user.username})</h3>
 				<Modal show={this.state.showModal} onHide={() => this.close()} error={this.state.error}>
 					<Modal.Header closeButton>
 						<Modal.Title>{this.state.modalTitle}</Modal.Title>
