@@ -25,6 +25,31 @@ const DIST_PATHS = {
 
 GitInfoReplace({filename: path.join(SRC,'buildinfo.json')});
 
+	
+const APPS = [
+	{
+		chunk: 'requestPasswordResetView',
+		entrypoint: 'RequestPasswordReset.jsx',
+		title: 'RD-Connect request password reset',
+	},
+	{
+		chunk: 'passwordResetView',
+		entrypoint: 'PasswordReset.jsx',
+		title: 'RD-Connect user password reset',
+	},
+	{
+		chunk: 'confirmEmailView',
+		entrypoint: 'ConfirmEmail.jsx',
+		title: 'RD-Connect valid e-mail confirmation',
+	},
+	{
+		chunk: 'acceptGDPRView',
+		entrypoint: 'AcceptGDPR.jsx',
+		title: 'RD-Connect GDPR acceptance',
+	},
+];
+
+
 module.exports = (env, argv) => {
 	var optimization;
 	var devtool;
@@ -40,23 +65,23 @@ module.exports = (env, argv) => {
 		// Setting the optimization parameters
 		optimization = {
 		//	runtimeChunk: true,
-			splitChunks: {
-		//		chunks: 'all',
-				cacheGroups: {
-					vendor: {
-						test: /[\\/]node_modules[\\/]/,
-						name: 'vendors',
-						chunks: 'all'
-					},
-					buildinfo: {
-						test: /[\\/]buildinfo.json/,
-						minSize: 0,
-						priority: 10,
-						name: 'info',
-						chunks: 'all'
-					}
-				}
-			}
+//			splitChunks: {
+//		//		chunks: 'all',
+//				cacheGroups: {
+//					vendor: {
+//						test: /[\\/]node_modules[\\/]/,
+//						name: 'vendors',
+//						chunks: 'all'
+//					},
+//					buildinfo: {
+//						test: /[\\/]buildinfo.json/,
+//						minSize: 0,
+//						priority: 10,
+//						name: 'info',
+//						chunks: 'all'
+//					}
+//				}
+//			}
 		};
 
 	//} else {
@@ -65,14 +90,32 @@ module.exports = (env, argv) => {
 	////	PATHS.dist = DIST;
 	//}
 	
+	let appsPlugins = APPS.map((app) => {
+			return new HtmlWebpackPlugin({
+				title: app.title,
+				relative: true,
+				chunks: [app.chunk],
+				template: path.join(PATHS.www,"index.html"),
+				filename: path.join(PATHS.dist,app.chunk,"index.html")
+			});
+	});
+	
+	let appsCopyCommon = APPS.map((app) => {
+		return {
+			context: DIST,
+			from: 'common/**/*',
+			to: DIST + '/' + app.chunk,
+		};
+	});
+	
 	return {
 		mode: 'development',
 		devtool: devtool,
 		entry: {
-			requestPasswordResetView: path.join(PATHS.app, 'RequestPasswordResetApp.jsx'),
-			passwordResetView: path.join(PATHS.app, 'PasswordResetApp.jsx'),
-			confirmEmailView: path.join(PATHS.app, 'ConfirmEmailApp.jsx'),
-			acceptGDPRView: path.join(PATHS.app, 'AcceptGDPRApp.jsx'),
+			requestPasswordResetView: path.join(PATHS.app, 'RequestPasswordReset.jsx'),
+			passwordResetView: path.join(PATHS.app, 'PasswordReset.jsx'),
+			confirmEmailView: path.join(PATHS.app, 'ConfirmEmail.jsx'),
+			acceptGDPRView: path.join(PATHS.app, 'AcceptGDPR.jsx'),
 		},
 		optimization: optimization,
 		output: {
@@ -148,11 +191,11 @@ module.exports = (env, argv) => {
 						{
 							loader: "url-loader",
 							options: {
-								outputPath: DIST_PATHS.images,
+								outputPath: 'common/' + DIST_PATHS.images,
 								limit: 1000
 							}
 						}
-					]
+					],
 				},
 				{
 					test: /\.jpg$/,
@@ -160,36 +203,34 @@ module.exports = (env, argv) => {
 						{
 							loader: "file-loader",
 							options: {
-								outputPath: DIST_PATHS.images,
+								outputPath: 'common/' + DIST_PATHS.images,
 							}
 						}
-					]
+					],
 				},
 				{
 					test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
 					use: [
 						{
-							loader: "url-loader",
+							loader: "file-loader",
 							options: {
-								outputPath: DIST_PATHS.fonts,
-								limit: 1000,
+								outputPath: 'common/' + DIST_PATHS.fonts,
 								mimetype: "application/font-woff"
 							}
 						}
-					]
+					],
 				},
 				{
 					test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
 					use: [
 						{
-							loader: "url-loader",
+							loader: "file-loader",
 							options: {
-								outputPath: DIST_PATHS.fonts,
-								limit: 1000,
+								outputPath: 'common/' + DIST_PATHS.fonts,
 								mimetype: "application/octet-stream"
 							}
 						}
-					]
+					],
 				},
 				{
 					test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
@@ -197,10 +238,10 @@ module.exports = (env, argv) => {
 						{
 							loader: "file-loader",
 							options: {
-								outputPath: DIST_PATHS.fonts,
+								outputPath: 'common/' + DIST_PATHS.fonts,
 							}
 						}
-					]
+					],
 				},
 				{
 					test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -208,17 +249,17 @@ module.exports = (env, argv) => {
 						{
 							loader: "url-loader",
 							options: {
-								outputPath: DIST_PATHS.images,
+								outputPath: 'common/' + DIST_PATHS.images,
 								limit: 1000,
 								mimetype: "image/svg+xml"
 							}
 						}
-					]
-				}
+					],
+				},
 			]
 		},
 		plugins: [
-			new HardSourceWebpackPlugin(),
+			//new HardSourceWebpackPlugin(),
 			new webpack.HashedModuleIdsPlugin(),
 			//new webpack.ProvidePlugin({
 			//// Parts here are needed to have bootstrap working properly
@@ -252,36 +293,9 @@ module.exports = (env, argv) => {
 			//		//	from: '*.html',
 			//		//}
 			//]),
-			new HtmlWebpackPlugin({
-				title: 'RD-Connect request password reset',
-				relative: true,
-				chunks: ['requestPasswordResetView'],
-				template: path.join(PATHS.www,"index.html"),
-				filename: path.join(PATHS.dist,'requestPasswordResetView',"index.html")
-			}),
-			new HtmlWebpackPlugin({
-				title: 'RD-Connect user password reset',
-				relative: true,
-				chunks: ['passwordResetView'],
-				template: path.join(PATHS.www,"index.html"),
-				filename: path.join(PATHS.dist,'passwordResetView',"index.html")
-			}),
-			new HtmlWebpackPlugin({
-				title: 'RD-Connect valid e-mail confirmation',
-				relative: true,
-				chunks: ['confirmEmailView'],
-				template: path.join(PATHS.www,"index.html"),
-				filename: path.join(PATHS.dist,'confirmEmailView',"index.html")
-			}),
-			new HtmlWebpackPlugin({
-				title: 'RD-Connect GDPR acceptance',
-				relative: true,
-				chunks: ['acceptGDPRView'],
-				template: path.join(PATHS.www,"index.html"),
-				filename: path.join(PATHS.dist,'acceptGDPRView',"index.html")
-			}),
+			...appsPlugins,
+			new CopyWebpackPlugin(appsCopyCommon),
 			new WebpackCleanupPlugin()
 		]
 	};
-
 };
