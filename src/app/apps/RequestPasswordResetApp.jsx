@@ -57,7 +57,7 @@ class RequestPasswordResetApp extends React.Component {
 		let errHandler = (err) => {
 			this.setState({
 					...err,
-					loadingError: true,
+					//loadingError: true,
 					showModal: true
 			});
 		};
@@ -130,7 +130,10 @@ class RequestPasswordResetApp extends React.Component {
 			);
 		}
 		
-		const onSubmit = () => this.requestChangePassword();
+		const onSubmit = () => {
+			this.requestChangePassword();
+			return false;
+		};
 		return (
 			<div>
 				<h3>Request password reset for RD-Connect user</h3>
@@ -154,7 +157,7 @@ class RequestPasswordResetApp extends React.Component {
 								>
 								<ControlLabel>Write your RD-Connect username or the e-mail address associated</ControlLabel>
 								<FormControl
-									type="password"
+									type="text"
 									value={this.state.usernameOrEmail}
 									placeholder="Username or e-mail"
 									onChange={(e) => this.handleChange(e)}
@@ -169,7 +172,7 @@ class RequestPasswordResetApp extends React.Component {
 								<Button bsStyle="info" onClick={()=>this.desistRequest()} className="submitCancelButtons" ><Glyphicon glyph="trash" />&nbsp;Cancel request</Button>
 							</Col>
 							<Col xs={12} sm={6} style={{textAlign: 'right'}}>
-								<Button bsStyle="danger" type="submit" className="submitCancelButtons" >Request password change&nbsp;<Glyphicon glyph="pencil" /></Button>
+								<Button bsStyle="danger" onClick={onSubmit}  className="submitCancelButtons" >Request password change&nbsp;<Glyphicon glyph="pencil" /></Button>
 							</Col>
 						</Row>
 					</Grid>

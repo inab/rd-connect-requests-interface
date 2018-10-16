@@ -6,15 +6,19 @@ class RequestHandler {
 	constructor() {
 		this.payload = null;
 		this.csrfToken = null;
+		this.cacheId = null;
 	}
 	
 	getRequestPayload(label = 'payload') {
 		return new Promise((resolve,reject) => {
+			this.cacheId = (new Date()).getTime();
 			let query = {
-				url: 'details',
+				url: 'details?_=' + this.cacheId,
 				type: 'GET',
-				cache: false,
 				dataType: 'json',
+				xhrFields: {
+					withCredentials: true
+				}
 			};
 			
 			jQuery.ajax(query)
@@ -66,15 +70,19 @@ class RequestHandler {
 		return new Promise((resolve,reject) => {
 			jQuery.ajax({
 				type: 'POST',
-				url: 'resolution',
+				url: 'details?_=' + this.cacheId,
 				headers: headers,
 				contentType: 'application/json',
 				dataType: 'json',
-				data: JSON.stringify(answer)
+				data: JSON.stringify(answer),
+				xhrFields: {
+					withCredentials: true
+				}
 			})
 			.done(resolve)
 			.fail((jqXhr) => {
 				let responseText = 'Failed to ' + label +  '. ';
+				console.log(jqXhr);
 				switch(jqXhr.status) {
 					case 0:
 						responseText += 'Not connect: Verify Network.';
@@ -82,7 +90,7 @@ class RequestHandler {
 					case 404:
 						responseText += 'Not found [404]';
 						break;
-					case 408:
+					case 409:
 						responseText += 'You should reload the page and try again';
 						break;
 					case 500:
@@ -108,49 +116,78 @@ class RequestHandler {
 	}
 	
 	desist(label = 'request') {
-		const headers = {};
-		headers[CSRF_HEADER] = this.csrfToken;
 		return new Promise((resolve,reject) => {
-			jQuery.ajax({
-				type: 'POST',
-				url: 'desist/' + this.payload.desistCode + '/resolution',
-				headers: headers,
-				contentType: 'application/json',
-				dataType: 'json',
-				data: JSON.stringify([])
-			})
-			.done(resolve)
-			.fail((jqXhr) => {
-				let responseText = 'Failed to desist ' + label +  '. ';
+			const cacheId = (new Date()).getTime();
+			let errHandler = (jqXhr, textStatus, errorThrown) => {
+				//cHnsole.log('Failed to retrieve user Information',jqXhr);
+				let responseText = 'Failed to desist ' + label + '. ';
 				switch(jqXhr.status) {
 					case 0:
 						responseText += 'Not connect: Verify Network.';
 						break;
 					case 404:
-						responseText += 'Not found [404]';
+						responseText += 'Requested User not found [404]';
 						break;
-					case 408:
+					case 409:
 						responseText += 'You should reload the page and try again';
 						break;
 					case 500:
 						responseText += 'Internal Server Error [500].';
 						break;
 					case 'parsererror':
-						responseText += 'Sent JSON parse failed.';
+						responseText += 'Requested JSON parse failed.';
 						break;
 					case 'timeout':
 						responseText += 'Time out error.';
 						break;
 					case 'abort':
-						responseText = 'Ajax request aborted.';
+						responseText += 'Ajax request aborted.';
 						break;
 					default:
-						responseText = 'Uncaught Error: ' + jqXhr.responseText;
+						responseText += 'Uncaught Error (' + jqXhr.status + '): ' + jqXhr.responseText;
 						break;
 				}
+				console.error('ERROR',errorThrown,responseText);
 				
-				reject({ modalTitle: 'Error', error: responseText, status: jqXhr.status});
-			});
+				this.csrfToken = null;
+				this.payload = null;
+				
+				reject({label: label, modalTitle: 'Error', error: responseText, status: jqXhr.status});
+			};
+			
+			let desistURL = 'desist/' + this.payload.desistCode + '/details?_=' + cacheId;
+			
+			let query = {
+				url: desistURL,
+				type: 'GET',
+				cache: false,
+				dataType: 'json',
+				xhrFields: {
+					withCredentials: true
+				}
+			};
+			
+			jQuery.ajax(query)
+			.done((data, textStatus, jqXHR) => {
+				const headers = {};
+				headers[CSRF_HEADER] = jqXHR.getResponseHeader(CSRF_HEADER);
+				
+				// This is needed in order to get a proper desist header
+				jQuery.ajax({
+					type: 'POST',
+					url: desistURL,
+					headers: headers,
+					contentType: 'application/json',
+					dataType: 'json',
+					data: JSON.stringify([]),
+					xhrFields: {
+						withCredentials: true
+					}
+				})
+				.done(resolve)
+				.fail(errHandler);
+			})
+			.fail(errHandler);
 		});
 	}
 }
