@@ -56,7 +56,7 @@ class AcceptGDPRApp extends React.Component {
 			});
 		};
 		
-		this.request.submitResponse({acceptGDPR: true})
+		this.request.submitResponse({GDPRtoken: this.state.user.GDPRtoken})
 			.then(() => {
 				this.setState({
 					showModal: true,
