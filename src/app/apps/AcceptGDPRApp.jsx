@@ -140,7 +140,7 @@ class AcceptGDPRApp extends React.Component {
 				</Modal>
 				<Grid>
 					<Row>
-						<p>Do you, {this.state.user.cn}, RD-Connect user {this.state.user.username}, accept GDPR terms?</p>
+						<p>Do you, {this.state.user.cn}, RD-Connect user {this.state.user.username}, accept GDPR terms, as you received in the e-mail from RD-Connect?</p>
 					</Row>
 					<Row>
 						<Col sm={12} md={6}>
