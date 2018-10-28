@@ -116,7 +116,7 @@ class ConfirmEmailApp extends React.Component {
 		if(this.state.user === null) {
 			return (
 				<div>
-					<h3>Fetching password reset data...</h3>
+					<h3>Fetching user related data...</h3>
 					<Modal show={this.state.showModal} onHide={() => this.close()} error={this.state.error}>
 						<Modal.Header closeButton>
 							<Modal.Title>{this.state.modalTitle}</Modal.Title>

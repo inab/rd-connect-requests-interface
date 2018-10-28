@@ -108,7 +108,7 @@ class AcceptGDPRApp extends React.Component {
 		if(this.state.user === null) {
 			return (
 				<div>
-					<h3>Fetching password reset data...</h3>
+					<h3>Fetching GDPR acceptance data...</h3>
 					<Modal show={this.state.showModal} onHide={() => this.close()} error={this.state.error}>
 						<Modal.Header closeButton>
 							<Modal.Title>{this.state.modalTitle}</Modal.Title>
@@ -140,7 +140,9 @@ class AcceptGDPRApp extends React.Component {
 				</Modal>
 				<Grid>
 					<Row>
-						<p>Do you, {this.state.user.cn}, RD-Connect user {this.state.user.username}, accept GDPR terms, as you received in the e-mail from RD-Connect?</p>
+						<div dangerouslySetInnerHTML={{__html: this.state.user.GDPRtext}} />
+						<hr />
+						<h4>Do you, {this.state.user.cn}, RD-Connect user {this.state.user.username}, accept GDPR terms, as you received in the e-mail from RD-Connect?</h4>
 					</Row>
 					<Row>
 						<Col sm={12} md={6}>
