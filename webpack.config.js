@@ -25,27 +25,33 @@ const DIST_PATHS = {
 
 GitInfoReplace({filename: path.join(SRC,'buildinfo.json')});
 
-	
+const ProjectName = 'RD-Connect';
+
 const APPS = [
 	{
 		chunk: 'requestPasswordResetView',
 		entrypoint: 'RequestPasswordReset.jsx',
-		title: 'RD-Connect request password reset',
+		title: ProjectName + ' request password reset',
 	},
 	{
 		chunk: 'passwordResetView',
 		entrypoint: 'PasswordReset.jsx',
-		title: 'RD-Connect user password reset',
+		title: ProjectName + ' user password reset',
 	},
 	{
 		chunk: 'confirmEmailView',
 		entrypoint: 'ConfirmEmail.jsx',
-		title: 'RD-Connect valid e-mail confirmation',
+		title: ProjectName + ' valid e-mail confirmation',
 	},
 	{
 		chunk: 'acceptGDPRView',
 		entrypoint: 'AcceptGDPR.jsx',
-		title: 'RD-Connect GDPR acceptance',
+		title: ProjectName + ' GDPR acceptance',
+	},
+	{
+		chunk: 'desistView',
+		entrypoint: 'DesistRequest.jsx',
+		title: ProjectName + ' desist request',
 	},
 ];
 
@@ -108,15 +114,22 @@ module.exports = (env, argv) => {
 		};
 	});
 	
+	let appsEntryCommon = {};
+	
+	APPS.forEach((app) => {
+		appsEntryCommon[app.chunk] = path.join(PATHS.app, app.entrypoint);
+	});
+	
 	return {
 		mode: 'development',
 		devtool: devtool,
-		entry: {
-			requestPasswordResetView: path.join(PATHS.app, 'RequestPasswordReset.jsx'),
-			passwordResetView: path.join(PATHS.app, 'PasswordReset.jsx'),
-			confirmEmailView: path.join(PATHS.app, 'ConfirmEmail.jsx'),
-			acceptGDPRView: path.join(PATHS.app, 'AcceptGDPR.jsx'),
-		},
+		entry: appsEntryCommon,
+		//entry: {
+		//	requestPasswordResetView: path.join(PATHS.app, 'RequestPasswordReset.jsx'),
+		//	passwordResetView: path.join(PATHS.app, 'PasswordReset.jsx'),
+		//	confirmEmailView: path.join(PATHS.app, 'ConfirmEmail.jsx'),
+		//	acceptGDPRView: path.join(PATHS.app, 'AcceptGDPR.jsx'),
+		//},
 		optimization: optimization,
 		output: {
 			filename: '[id]/[name].[chunkhash].js',
