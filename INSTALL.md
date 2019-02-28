@@ -22,7 +22,7 @@
 	cd rd-connect-requests-interface
 	npm install --no-save
 	export PATH="${PWD}/node_modules/.bin:$PATH"
-	webpack -p
+	webpack
 	```
 
 3. Install the requests interfaces:

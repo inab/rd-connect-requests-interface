@@ -172,7 +172,7 @@ class RequestPasswordResetApp extends React.Component {
 								<Button bsStyle="info" onClick={()=>this.desistRequest()} className="submitCancelButtons" ><Glyphicon glyph="trash" />&nbsp;Cancel request</Button>
 							</Col>
 							<Col xs={12} sm={6} style={{textAlign: 'right'}}>
-								<Button bsStyle="danger" onClick={onSubmit}  className="submitCancelButtons" >Request password change&nbsp;<Glyphicon glyph="pencil" /></Button>
+								<Button bsStyle="danger" onClick={onSubmit}  className="submitCancelButtons" disabled={this.state.usernameOrEmail.length === 0}>Request password change&nbsp;<Glyphicon glyph="pencil" /></Button>
 							</Col>
 						</Row>
 					</Grid>
